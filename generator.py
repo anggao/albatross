@@ -29,12 +29,14 @@ class Post:
                 content += line
         self.__dict__.update(yaml.load(content))
 
+@app.template_filter('date')
 def format_date(value, format="%B %d, %Y"):
     return value.strftime(format)
 
-@app.context_processor
-def injext_format_date():
-    return {'format_date': format_date}
+#app.jinja_env.filters['date'] = format_date
+#@app.context_processor
+#def injext_format_date():
+#    return {'format_date': format_date}
 
 @app.route('/')
 def index():
