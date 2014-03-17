@@ -1,9 +1,12 @@
 import os
 import markdown
 import yaml
+import sys
 import collections
+
 from flask import Flask, render_template, url_for, abort
 from flask import request
+from flask.ext.frozen import Freezer
 from werkzeug import cached_property
 from werkzeug.contrib.atom import AtomFeed
 
@@ -102,6 +105,7 @@ class Post:
 
 app = Flask(__name__)
 blog = Blog(app, 'posts')
+freezer = Freezer(app)
 
 @app.template_filter('date')
 def format_date(value, format="%B %d, %Y"):
@@ -116,9 +120,9 @@ def format_date(value, format="%B %d, %Y"):
 def index():
     return render_template('index.html', posts=blog.posts)
 
-@app.route('/blog/<path:path>')
+@app.route('/blog/<path:path>/')
 def post(path):
-    path = path.strip('/')
+#    path = path.strip('/')
     post = Post(path+POSTS_FILE_EXTENSION, root_dir='posts')
     return render_template('post.html', post=post)
 
@@ -142,4 +146,7 @@ def feed():
 
 
 if __name__ == '__main__':
-    app.run(port=8000, debug=True)
+    if len(sys.argv) > 1 and sys.argv[1] == 'build':
+        freezer.freeze()
+    else:
+        app.run(port=8000, debug=True)
