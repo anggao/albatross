@@ -10,9 +10,6 @@ from flask.ext.frozen import Freezer
 from werkzeug import cached_property
 from werkzeug.contrib.atom import AtomFeed
 
-
-POSTS_FILE_EXTENSION = '.md'
-
 class SortedDict(collections.MutableMapping):
     def __init__(self, items = None, key = None, reverse = False):
         self._items = {}
@@ -50,10 +47,10 @@ class SortedDict(collections.MutableMapping):
 
 
 class Blog:
-    def __init__(self, app, root_dir, file_ext = POSTS_FILE_EXTENSION):
+    def __init__(self, app, root_dir, file_ext = None):
         self._app = app
         self.root_dir = root_dir
-        self.ext = file_ext
+        self.ext = file_ext if file_ext is not None else app.config['POSTS_FILE_EXTENSION']
         self._cache = SortedDict(key=lambda p: p.date, reverse=True)
         self._initialize_cache()
 
@@ -68,7 +65,10 @@ class Blog:
 
     @property
     def posts(self):
-        return self._cache.values()
+        if self._app.debug:
+            return self._cache.values()
+        else:
+            return [post for post in self._cache.values() if post.published]
 
     def get_post_or_404(self, path):
         """Returns the Post object for the given path or raises an NotFound
@@ -83,6 +83,7 @@ class Post:
     def __init__(self, path, root_dir=''):
         self.urlpath = os.path.splitext(path)[0]
         self.filepath = os.path.join(root_dir, path)
+        self.published = False
         self._initialize_metadata()
 
     @cached_property
@@ -104,6 +105,9 @@ class Post:
         self.__dict__.update(yaml.load(content))
 
 app = Flask(__name__)
+
+import settings
+app.config.from_object(settings)
 blog = Blog(app, 'posts')
 freezer = Freezer(app)
 
@@ -123,7 +127,7 @@ def index():
 @app.route('/blog/<path:path>/')
 def post(path):
 #    path = path.strip('/')
-    post = Post(path+POSTS_FILE_EXTENSION, root_dir='posts')
+    post = Post(path+settings.POSTS_FILE_EXTENSION, root_dir='posts')
     return render_template('post.html', post=post)
 
 @app.route('/feed.atom')
