@@ -90,7 +90,7 @@ class Post:
     def html(self):
         with open(self.filepath, 'r') as fin:
             content = fin.read().split('\n\n', 1)[1].strip()
-        return markdown.markdown(content)
+        return markdown.markdown(content, extensions=["codehilite(linenums=True)"])
 
     def url(self, _external=False):
         return url_for('post', path=self.urlpath, _external=_external)
