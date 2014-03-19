@@ -1,17 +1,80 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- TODO -->
+    <meta name="author" content="anggao">
     {% block head %}
       <title>Blog</title>
     {% endblock head %}
 
     <!-- Stylesheets -->
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+    <!--
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/syntax.css') }}">
+    -->
 
     <!-- Atom Feed -->
    <link href="{{ url_for('feed') }}" rel="alternate" title="Recent Posts" type="application/atom+xml">
   </head>
+
   <body>
-    {% block content %}{% endblock content %}
+    <!-- Navbar -->
+    <div class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <div class="nav-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#archive">Archive</a></li>
+            <li><a href="#about">Tags</a></li>
+            <li><a href="#contact">About</a></li>
+          </ul>
+
+           <ul id="social" class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/anggao"><img alt="Github" src="{{ url_for('static', filename='images/github-icon.png') }}"></a>
+            </li>
+            <li>
+              <a href="http://twitter.com/anggao"><img alt="Twitter" src="{{ url_for('static', filename='images/twitter-icon.png') }}"></a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/anggao"><img alt="Linkedin" src="{{ url_for('static', filename='images/linkedin-icon.png') }}"></a>
+            </li>
+           </ul> 
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      {% block content %}{% endblock content %}
+
+      <div class="footer">
+        <p>© AngGao 2014</p>
+      </div>
+    </div><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   </body>
 </html>

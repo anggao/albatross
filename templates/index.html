@@ -1,23 +1,39 @@
 {% extends 'base.html' %}
 
 {% block head %}
+<!--
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+-->
 {% endblock head%}
 
 {% block content %}
-  <div id="header">
-    <h1>My blog</h1>
-  </div>
 
-  <div id="posts">
-    {% for post in posts %}
-      <div class="post">
-        <span class="post-date">{{ post.date|date }}</span>
-        <a href="{{ post.url() }}" class="post-title">
-          {{ post.title }} {% if post.subtitle %} : {{ post.subtitle }} {% endif %}
-        </a>
-      </div>
-    {% endfor %}
-  </div>
+<div class="content">
+  <div class="row">
+    <div style="width: 370px; float: right;
+    margin-left: 30px;
+    min-height: 1px;">
+    <h2>Hello. I'm Ang</h2>
+    <p><img style="border-radius: 6px 6px 6px 6px; 
+           float: left; height: auto;
+           margin: 4px 8px 4px 0; border: 0 none;
+           max-width: 100%; vertical-align: middle;" src="http://www.gravatar.com/avatar/f819a092b23cb25a09f87436f68df217.png" alt="Ang Gao" title="Follow me on Twitter @anggao">
+        I am a Ph.D student in the Department of Computer Science at University College Cork.
+    </p><p></p>
+    </div>
+
+
+     <div id="posts">
+        {% for post in posts %}
+          <div class="post">
+            <span class="post-date">{{ post.date|date }}</span>
+            <a href="{{ post.url() }}" class="post-title">
+              {{ post.title }} {% if post.subtitle %} : {{ post.subtitle }} {% endif %}
+            </a>
+          </div>
+        {% endfor %}
+     </div>
+    </div>
+</div>
 
 {% endblock content %}
