@@ -1,6 +1,7 @@
 title: First blog
 date: 2014-03-09
 published: true
+tags: programming, python
 
 # Hello World
 

@@ -103,6 +103,10 @@ class Post:
                     break
                 content += line
         self.__dict__.update(yaml.load(content))
+        if hasattr(self, 'tags'):
+            self.tags = [tag.strip() for tag in self.tags.split(',')]
+        else:
+            self.tags = []
 
 app = Flask(__name__)
 
