@@ -5,7 +5,7 @@ import sys
 import collections
 
 from flask import Flask, render_template, url_for, abort
-from flask import request
+from flask import request, g
 from flask.ext.frozen import Freezer
 from werkzeug import cached_property
 from werkzeug.contrib.atom import AtomFeed
@@ -115,6 +115,11 @@ app.config.from_object(settings)
 blog = Blog(app, 'posts')
 freezer = Freezer(app)
 
+
+# load yaml config file, customize the blog
+import yaml
+config = yaml.load(file('config.yaml', 'r'))
+
 @app.template_filter('date')
 def format_date(value, format="%B %d, %Y"):
     return value.strftime(format)
@@ -126,6 +131,7 @@ def format_date(value, format="%B %d, %Y"):
 
 @app.route('/')
 def index():
+    g.config = config
     return render_template('index.html', posts=blog.posts)
 
 @app.route('/blog/<path:path>/')

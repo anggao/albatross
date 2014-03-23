@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- TODO -->
-    <meta name="author" content="anggao">
+    <meta name="author" content="{{ g.config['author'] }}">
     {% block head %}
-      <title>Blog</title>
+    <title>{{ g.config['blog'] }}</title>
     {% endblock head %}
 
     <!-- Stylesheets -->
