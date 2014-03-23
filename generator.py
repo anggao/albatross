@@ -45,16 +45,17 @@ class SortedDict(collections.MutableMapping):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self._items)
 
-
 class Blog:
     def __init__(self, app, root_dir, file_ext = None):
         self._app = app
         self.root_dir = root_dir
         self.ext = file_ext if file_ext is not None else app.config['POSTS_FILE_EXTENSION']
         self._cache = SortedDict(key=lambda p: p.date, reverse=True)
+        self._tagSys = SortedDict(key=lambda tag: tag, reverse=True)
         self._initialize_cache()
 
     def _initialize_cache(self):
+        # TODO improve performance
         """Walks the root directory and adds all posts to the cache
         """
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
@@ -62,6 +63,9 @@ class Blog:
                 if os.path.splitext(filename)[1] == self.ext:
                     post = Post(filename, 'posts')
                     self._cache[post.urlpath] = post
+                    for tag in post.tags:
+                        # TODO use sorted list
+                        self._tagSys.setdefault(tag, []).append(post)
 
     @property
     def posts(self):
@@ -69,6 +73,13 @@ class Blog:
             return self._cache.values()
         else:
             return [post for post in self._cache.values() if post.published]
+
+    @property
+    def get_posts_with_tag(self, tag=None):
+        if tag:
+            return self._tagSys.setdefault(tag, [])
+        else:
+            return self._tagSys
 
     def get_post_or_404(self, path):
         """Returns the Post object for the given path or raises an NotFound
@@ -129,16 +140,22 @@ def format_date(value, format="%B %d, %Y"):
 #def injext_format_date():
 #    return {'format_date': format_date}
 
+@app.before_request
+def preconfig():
+    g.config = config
+
 @app.route('/')
 def index():
-    g.config = config
     return render_template('index.html', posts=blog.posts)
 
 @app.route('/blog/<path:path>/')
 def post(path):
-#    path = path.strip('/')
     post = Post(path+settings.POSTS_FILE_EXTENSION, root_dir='posts')
     return render_template('post.html', post=post)
+
+@app.route('/tags/')
+def tags():
+    return render_template('tags.html', tags=blog.get_posts_with_tag)
 
 @app.route('/feed.atom')
 def feed():

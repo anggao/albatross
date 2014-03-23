@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% set active_page= "home" %}
+
+{% block head %}
+<!--
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+-->
+{% endblock head%}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-8 blog-main">
+       <div class="page-header">
+          <h1>Tags  <small><!--Blogging Like a Hacker--></small></h1>
+       </div> 
+       <div id="tag-box">
+         {% for tag in tags %}
+           <span class="badge">{{ tags[tag]|length }}</span><a href="{{ url_for('tags') }}#{{ tag }}"><span class="label label-info">{{ tag }}</span></a>
+         {% endfor %}
+       </div>
+       <div id="blog-posts">
+          {% for tag in tags %}
+          <h3 id="{{ tag }}">{{ tag }}</h3>
+            {% for post in tags[tag] %}
+              <div class="blog-post">
+                <span class="post-date">{{ post.date|date }}</span>
+                <a href="{{ post.url() }}" class="post-title">
+                  {{ post.title }} {% if post.subtitle %} : {{ post.subtitle }} {% endif %}
+                </a>
+              </div>
+            {% endfor %}
+          {% endfor %}
+       </div>
+    </div>
+  </div>
+{% endblock content %}
