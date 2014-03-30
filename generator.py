@@ -157,6 +157,10 @@ def post(path):
 def tags():
     return render_template('tags.html', tags=blog.get_posts_with_tag)
 
+@app.route('/achive/')
+def achive():
+    return render_template('achive.html', posts=blog.posts)
+
 @app.route('/about/')
 def about():
     return render_template('about.html')
