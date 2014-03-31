@@ -9,13 +9,13 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-sm-8 blog-main">
+    <div class="blog-main">
        <div class="page-header">
           <h1>Tags  <small><!--Blogging Like a Hacker--></small></h1>
        </div> 
        <div id="tag-box">
          {% for tag in tags %}
-           <span class="badge">{{ tags[tag]|length }}</span><a href="{{ url_for('tags') }}#{{ tag }}"><span class="label label-info">{{ tag }}</span></a>
+           <span class="badge">{{ tags[tag]|length }}</span><a href="{{ url_for('tags') }}#{{ tag }}"><span class="label label-success">{{ tag }}</span></a>
          {% endfor %}
        </div>
        <div id="blog-posts">
@@ -29,6 +29,7 @@
                 </a>
               </div>
             {% endfor %}
+            <h2></h2> <!--output separator -->
           {% endfor %}
        </div>
     </div>

@@ -31,3 +31,12 @@ background-color: #eee;
 .blog-post {
   margin-bottom: 5px;
 }
+
+#blog-posts h3{
+  color: #666;
+  font-size: 18px;
+}
+
+#blog-posts h2{
+  border-bottom: 1px dotted #aaa;
+}
