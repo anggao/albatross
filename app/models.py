@@ -1,14 +1,13 @@
 import os
 import markdown
 import yaml
-import sys
 import collections
 
-from flask import Flask, render_template, url_for, abort
-from flask import request, g
-from flask.ext.frozen import Freezer
+
 from werkzeug import cached_property
-from werkzeug.contrib.atom import AtomFeed
+from flask import url_for, abort
+
+from app import app
 
 class SortedDict(collections.MutableMapping):
     def __init__(self, items = None, key = None, reverse = False):
@@ -55,7 +54,7 @@ class Blog:
         self._initialize_cache()
 
     def _initialize_cache(self):
-        # TODO improve performance
+        # TODO improve performance (use a file DB ?)
         """Walks the root directory and adds all posts to the cache
         """
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
@@ -119,73 +118,4 @@ class Post:
         else:
             self.tags = []
 
-app = Flask(__name__)
-
-import settings
-app.config.from_object(settings)
 blog = Blog(app, 'posts')
-freezer = Freezer(app)
-
-
-# load yaml config file, customize the blog
-import yaml
-config = yaml.load(file('config.yaml', 'r'))
-
-@app.template_filter('date')
-def format_date(value, format="%B %d, %Y"):
-    return value.strftime(format)
-
-#app.jinja_env.filters['date'] = format_date
-#@app.context_processor
-#def injext_format_date():
-#    return {'format_date': format_date}
-
-@app.before_request
-def preconfig():
-    g.config = config
-
-@app.route('/')
-def index():
-    return render_template('index.html', posts=blog.posts)
-
-@app.route('/blog/<path:path>/')
-def post(path):
-    post = Post(path+settings.POSTS_FILE_EXTENSION, root_dir='posts')
-    return render_template('post.html', post=post)
-
-@app.route('/tags/')
-def tags():
-    return render_template('tags.html', tags=blog.get_posts_with_tag)
-
-@app.route('/achive/')
-def achive():
-    return render_template('achive.html', posts=blog.posts)
-
-@app.route('/about/')
-def about():
-    return render_template('about.html')
-
-@app.route('/feed.atom')
-def feed():
-    feed = AtomFeed('Recent Posts',
-            feed_url = request.url,
-            url = request.url_root)
-    posts = blog.posts[:10]
-    title = lambda p: '%s : %s' % (p.title, p.subtitle) if hasattr(p,
-            'subtitle') else p.title
-    for post in posts:
-        feed.add(title(post),
-            unicode(post.html),
-            content_type='html',
-            author='Ang Gao',
-            url = post.url(_external=True),
-            updated=post.date,
-            published=post.date)
-    return feed.get_response()
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'build':
-        freezer.freeze()
-    else:
-        app.run(port=8000, debug=True)
